@@ -217,6 +217,10 @@ public class TipsViewController: BasePaymentViewController, UICollectionViewDele
         self.amountTextField.inputAccessoryView = self.toolbar
         self.commentTextField.inputAccessoryView = self.toolbar
         
+        self.amountTextField.text = configuration.defaultAmount.flatMap {
+            String($0)
+        }
+        
         self.amountTextField.shouldReturn = {
             self.commentTextField.becomeFirstResponder()
             return false
@@ -546,7 +550,7 @@ extension TipsViewController: PKPaymentAuthorizationViewControllerDelegate {
     
     public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
         if let layoutId = self.configuration.layout?.layoutId, let cryptogram = payment.convertToString() {
-            let paymentData = PaymentData.init(layoutId: layoutId, amount: self.amount, comment: self.commentTextField.text)
+            let paymentData = PaymentData.init(layoutId: layoutId, amount: self.amount, comment: self.commentTextField.text, invoiceId: configuration.invoiceId)
             self.auth(with: paymentData, cryptogram: cryptogram, captchaToken: self.captchaToken ?? "") { (response, error) in
                 if response?.status == .success {
                     self.paymentError = nil

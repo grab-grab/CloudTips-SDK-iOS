@@ -43,7 +43,7 @@ public class CloudtipsApi {
     }
     
     func auth(with paymentData: PaymentData, cryptogram: String, captchaToken: String, completion: HTTPRequestCompletion<PaymentResponse>?) {
-        let params: [String: Any] =
+        var params: [String: Any] =
             ["cardholderName": "Cloudtips SDK",
              "cardCryptogramPacket": cryptogram,
              "amount": paymentData.amount,
@@ -51,6 +51,10 @@ public class CloudtipsApi {
              "comment": paymentData.comment ?? "",
              "layoutId": paymentData.layoutId,
              "captchaVerificationToken": captchaToken]
+        
+        if let invoiceId = paymentData.invoiceId {
+            params["invoiceId"] = invoiceId
+        }
         
         let request = HTTPRequest(resource: .authPayment, method: .post, parameters: params)
         makeObjectRequest(request, completion: completion)
